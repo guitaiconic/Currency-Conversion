@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import Logo from "./component/presentation/logo";
 import Amount from "./component/state/amount";
-import From from "./component/state/from";
+import From from "./component/presentation/from";
+import To from "./component/presentation/to";
+import Button from "./component/presentation/button";
+import ConvertedAmount from "./component/presentation/ConvertedAmount";
 
 function App() {
-  const [toCur, setToCur] = useState("EUR");
-  const [fromCur, setFromCur] = useState("NGN");
+  const [toCur, setToCur] = useState("NGN");
+  const [fromCur, setFromCur] = useState("GBP");
   const [convertedAmount, setConvertedAmount] = useState("");
   const [converted, setConverted] = useState(false);
   const [amount, setAmount] = useState([]);
@@ -27,7 +30,7 @@ function App() {
       if (data.data && data.data[toCur]) {
         const rate = data.data[toCur].value;
         const converted = (amount * rate).toFixed(2); // Calculate conversion
-        console.log(converted);
+        setConvertedAmount(converted);
         setConverted(true); // Update converted amount
       } else {
         console.error(`Conversion rate for ${toCur} not found.`);
@@ -46,28 +49,14 @@ function App() {
       <Logo />
       <Amount amount={amount} onSetAmount={setAmount} />
       <From fromCur={fromCur} onSetFromCur={setFromCur} />
+      <To toCur={toCur} onSetToCur={setToCur} />
+      <Button converter={converter} />
 
-      <div className="input-group">
-        <label>To</label>
-        <select value={toCur} onChange={(e) => setToCur(e.target.value)}>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-          <option value="GBP">GBP</option>
-          <option value="INR">INR</option>
-          <option value="NGN">NGN</option>
-        </select>
-      </div>
-      <button className="convert-btn" onClick={converter}>
-        Convert
-      </button>
-      <div className="result">
-        <h2>Converted Amount:</h2>
-        {converted && (
-          <p>
-            {convertedAmount} {toCur}
-          </p>
-        )}
-      </div>
+      <ConvertedAmount
+        convertedAmount={convertedAmount}
+        toCur={toCur}
+        converted={converted}
+      />
     </div>
   );
 }
